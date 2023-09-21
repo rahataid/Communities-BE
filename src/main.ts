@@ -1,5 +1,6 @@
 // src/main.ts
 
+import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PORT } from 'src/config';
@@ -13,6 +14,10 @@ async function bootstrap() {
 
   // app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new RsExceptionFilter());
+  app.setGlobalPrefix('api').enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Community Service')

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
 import { UpdateCommunityAssetDto } from './dto/update-community.dto';
@@ -32,7 +33,7 @@ export class CommunityService {
   }
 
   findAll(query: any) {
-    const where: any = {};
+    const where: Prisma.CommunityWhereInput = {};
 
     if (query.category) {
       where.categoryId = Number(query.category);
@@ -49,26 +50,53 @@ export class CommunityService {
       };
     }
 
-    return this.prisma.community.findMany({
-      where,
-      select: {
-        category: true,
-        country: true,
-        name: true,
-        id: true,
-        fundRaisedUsd: true,
-        fundRaisedLocal: true,
-        localCurrency: true,
-        latitude: true,
-        longitude: true,
-        description: true,
-        address: true,
-        images: true,
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+    const select: Prisma.CommunitySelect = {
+      category: true,
+      country: true,
+      name: true,
+      id: true,
+      fundRaisedUsd: true,
+      fundRaisedLocal: true,
+      localCurrency: true,
+      latitude: true,
+      longitude: true,
+      description: true,
+      address: true,
+      images: true,
+    };
+    const orderBy: Prisma.CommunityOrderByWithRelationInput={
+      name:'asc'
+    }
+    // return this.prisma.community.findMany({
+    //   where,
+    //   select: {
+    //     category: true,
+    //     country: true,
+    //     name: true,
+    //     id: true,
+    //     fundRaisedUsd: true,
+    //     fundRaisedLocal: true,
+    //     localCurrency: true,
+    //     latitude: true,
+    //     longitude: true,
+    //     description: true,
+    //     address: true,
+    //     images: true,
+    //   },
+    //   orderBy: {
+    //     name: 'asc',
+    //   },
+    // });
+
+    return paginate(
+      this.prisma.community,
+      {where,select,orderBy},
+      {
+        page:query.page,
+        perPage:query.perPage,
+       
+      }
+    )
   }
 
   findOne(address: string) {

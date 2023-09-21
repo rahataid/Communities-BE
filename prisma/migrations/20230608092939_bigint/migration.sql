@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "tbl_communities" ALTER COLUMN "fundRaisedLocal" SET DATA TYPE BIGINT,
-ALTER COLUMN "fundRaisedUsd" SET DEFAULT 0,
-ALTER COLUMN "fundRaisedUsd" SET DATA TYPE DOUBLE PRECISION;
