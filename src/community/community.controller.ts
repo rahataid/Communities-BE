@@ -16,6 +16,7 @@ import { CreateManager } from './dto/manager.dto';
 import {
   UpdateCommunityAssetDto,
   UpdateCommunityDto,
+  UploadAssetDto,
 } from './dto/update-community.dto';
 
 @Controller('communities')
@@ -77,5 +78,10 @@ export class CommunityController {
   @Get('/search/:searchKey')
   searchCommunity(@Param('searchKey') searchKey: string) {
     return this.communitiesService.search(searchKey);
+  }
+
+  @Post(':id/upload-asset')
+  uploadAsset(@Param('id') id: string, @Body() assetData: UploadAssetDto) {
+    return this.communitiesService.uploadAsset(+id, assetData);
   }
 }

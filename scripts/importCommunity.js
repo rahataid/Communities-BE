@@ -5,7 +5,7 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const googleCreds = require('../config/google.json');
 const axios = require('axios');
 const data = require('./community_data.json');
-// const generateWallet = require('./generateWallet');
+const { generateWallet } = require('./generateWallet');
 
 const communityHost = axios.create({
   baseURL: 'https://community-api-stage.rahat.io',
@@ -43,9 +43,17 @@ const lib = {
         manager,
         tags,
         transactions,
+        tx_description,
         category,
         ...commData
       } = sanitizedData[dataIndex];
+
+      // if (!commData.address) {
+      //   const wallet = await generateWallet(pilot);
+      //   rowData.address = wallet.address;
+      //   await rowData.save();
+      //   console.log('address', wallet.address);
+      // }
 
       const foundFromData = data.find((d) => d.address === commData.address);
 
@@ -56,8 +64,12 @@ const lib = {
         categoryId: category,
 
         tags: [tags],
-        images: { ...foundFromData.images },
+        images: { ...(foundFromData?.images || null) },
+        // name: foundFromData?.name || commData?.name,
+        // description: foundFromData?.description || commData?.description,
       };
+
+      console.log('createData', createData);
 
       const { data: communityData } = await communityHost.post(
         '/communities',
@@ -88,22 +100,20 @@ const lib = {
       manager: row.manager || '',
       description: row?.description?.replace(/\r?\n/g, '').trim() || '',
       tags: row?.tags,
-      images: {
-        logo: row.logo ? formatGoogleDriveURL(row.logo) : '',
-        cover: row.cover ? formatGoogleDriveURL(row.cover) : '',
-        gallery: [],
-      },
+      // images: {
+      //   logo: row.logo ? formatGoogleDriveURL(row.logo) : '',
+      //   cover: row.cover ? formatGoogleDriveURL(row.cover) : '',
+      //   gallery: [],
+      // },
       fundRaisedUsd: Number(row.tx_usd) || 0,
-      localCurrency: row?.currency || 'NPR',
+      localCurrency: row.country === 'Pakistan' ? 'wheels' : 'NPR',
       fundRaisedLocal: String(row?.tx_npr) || 0,
       longitude: Number(row.longitude) || '',
       latitude: Number(row.latitude) || '',
-      country: row?.country || 'Nepal',
+      country: row.country,
       pilot:
-        row?.tx_description
-          ?.toLowerCase()
-          .replace(' ', '_')
-          .replace('.0', '') || '',
+        row?.pilot?.toLowerCase().replace(' ', '_').replace('.0', '') || '',
+      tx_description: row?.tx_description?.replace(/\r?\n/g, '').trim(),
       address: row?.address || null,
 
       transactions: {

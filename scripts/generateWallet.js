@@ -5,4 +5,4 @@ const generateWallet = async (value, password = '9670') => {
   return brainWallet;
 };
 
-module.exports = generateWallet;
+module.exports = { generateWallet };

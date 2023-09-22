@@ -1,5 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
+import { UploadAssetParams } from 'asset-uploader';
 import { CreateCommunityDto } from './create-community.dto';
 
 export class UpdateCommunityDto extends PartialType(CreateCommunityDto) {}
@@ -22,4 +23,30 @@ export class UpdateCommunityAssetDto {
     example: [],
   })
   gallery?: string[];
+}
+
+export class UploadAssetDto {
+  @ApiProperty({
+    type: 'string',
+    example: '',
+  })
+  file: UploadAssetParams['file'];
+
+  @ApiProperty({
+    type: 'string',
+    example: '',
+  })
+  fileName: UploadAssetParams['fileName'];
+
+  @ApiProperty({
+    type: 'array',
+    example: [],
+  })
+  folderName: UploadAssetParams['folderName'];
+
+  @ApiProperty({
+    type: 'array',
+    example: [],
+  })
+  mimeType: UploadAssetParams['mimeType'];
 }

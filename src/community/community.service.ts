@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { AssetAvailableUploaders, AssetUploader } from 'asset-uploader';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
-import { UpdateCommunityAssetDto } from './dto/update-community.dto';
+import {
+  UpdateCommunityAssetDto,
+  UploadAssetDto,
+} from './dto/update-community.dto';
+
+const awsConfig = {
+  accessKey: 'AKIA2MEMCLOQ7EGTYVJU',
+  secret: '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',
+  bucket: 'development',
+  region: 'us-east-1',
+};
+
+AssetUploader.set(AssetAvailableUploaders.S3, awsConfig);
 
 @Injectable()
 export class CommunityService {
@@ -64,9 +77,9 @@ export class CommunityService {
       address: true,
       images: true,
     };
-    const orderBy: Prisma.CommunityOrderByWithRelationInput={
-      name:'asc'
-    }
+    const orderBy: Prisma.CommunityOrderByWithRelationInput = {
+      name: 'asc',
+    };
     // return this.prisma.community.findMany({
     //   where,
     //   select: {
@@ -90,13 +103,12 @@ export class CommunityService {
 
     return paginate(
       this.prisma.community,
-      {where,select,orderBy},
+      { where, select, orderBy },
       {
-        page:query.page,
-        perPage:query.perPage,
-       
-      }
-    )
+        page: query.page,
+        perPage: query.perPage,
+      },
+    );
   }
 
   findOne(address: string) {
@@ -207,5 +219,12 @@ export class CommunityService {
         ...data,
       },
     });
+  }
+
+  async uploadAsset(id: number, assetData: UploadAssetDto) {
+    console.log('first', assetData);
+    const uploaded = await AssetUploader.upload(assetData);
+
+    return uploaded;
   }
 }
