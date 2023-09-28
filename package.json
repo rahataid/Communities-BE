@@ -45,7 +45,7 @@
     "nodemailer": "^6.9.1",
     "prisma": "^4.11.0",
     "reflect-metadata": "^0.1.13",
-    "rs-asset-uploader": "^1.0.4",
+    "rs-asset-uploader": "^1.0.5",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.6.2"
   },
