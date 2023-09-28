@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { AssetUploader } from 'rs-asset-uploader';
 import {
   AssetAvailableUploaders,
-  AssetUploader,
   UploadAssetParams,
-} from 'asset-uploader';
+} from 'rs-asset-uploader/dist/types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
 import { UpdateCommunityAssetDto } from './dto/update-community.dto';
 
-const awsConfig = {
-  accessKey: 'AKIA2MEMCLOQ7EGTYVJU',
-  secret: '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',
-  bucket: 'rahat-rumsan',
-  region: 'us-east-1',
+export const awsConfig = {
+  accessKey: process.env.AWS_ACCESS_KEY_ID,
+  secret: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+  bucket: process.env.AWS_BUCKET_NAME,
 };
-
-AssetUploader.set(AssetAvailableUploaders.S3, awsConfig);
 
 @Injectable()
 export class CommunityService {
@@ -223,12 +221,23 @@ export class CommunityService {
   }
 
   async uploadAsset(walletAddress: string, assetData: any) {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        address: walletAddress,
+      },
+    });
+    console.log('awsConfig', awsConfig);
+
+    AssetUploader.set(AssetAvailableUploaders.S3, awsConfig);
+
     const uploadData: UploadAssetParams = {
       file: assetData.buffer,
       fileName: assetData.originalname,
       mimeType: assetData.mimetype,
-      folderName: 'development',
+      rootFolderName: process.env.AWS_ROOT_FOLDER,
+      folderName: community.name,
     };
+    console.log('first', uploadData);
     const uploaded = await AssetUploader.upload(uploadData);
     return uploaded;
 
