@@ -1,6 +1,5 @@
 // src/main.ts
 
-import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, urlencoded } from 'express';
@@ -15,10 +14,10 @@ async function bootstrap() {
   // const configService = app.get(ConfigService);
   // app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new RsExceptionFilter());
-  app.setGlobalPrefix('api').enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1',
-  });
+  // app.setGlobalPrefix('api').enableVersioning({
+  //   type: VersioningType.URI,
+  //   defaultVersion: '1',
+  // });
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
 
