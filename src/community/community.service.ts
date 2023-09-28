@@ -13,7 +13,7 @@ import {
 const awsConfig = {
   accessKey: 'AKIA2MEMCLOQ7EGTYVJU',
   secret: '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',
-  bucket: 'development',
+  bucket: 'rahat-rumsan',
   region: 'us-east-1',
 };
 
