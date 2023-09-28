@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { AssetUploader } from 'rs-asset-uploader';
 import {
   AssetAvailableUploaders,
-  UploadAssetParams
+  UploadAssetParams,
 } from 'rs-asset-uploader/dist/types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
@@ -13,12 +13,13 @@ import { UpdateCommunityAssetDto } from './dto/update-community.dto';
 
 export const awsConfig = {
   accessKey: process.env.AWS_ACCESS_KEY_ID,
-  secret: process.env.AWS_SECRET_ACCESS_KEY,
+  secret: 'ceYDNMdF0uOGfy/ZxySaO3nfYi3Vcf20JXq+D1F3',
+  // secret: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
   bucket: process.env.AWS_BUCKET_NAME,
 };
 
-AssetUploader.set(AssetAvailableUploaders.S3,awsConfig)
+AssetUploader.set(AssetAvailableUploaders.S3, awsConfig);
 
 @Injectable()
 export class CommunityService {
@@ -222,10 +223,10 @@ export class CommunityService {
     });
   }
 
-  async uploadAsset(walletAddress: string,key:string, assetData: any) {
+  async uploadAsset(walletAddress: string, key: string, assetData: any) {
     const community = await this.prisma.community.findUnique({
       where: {
-        address:walletAddress
+        address: walletAddress,
       },
     });
     const uploadData: UploadAssetParams = {
@@ -236,89 +237,82 @@ export class CommunityService {
       folderName: community.name,
     };
     const uploaded = await AssetUploader.upload(uploadData);
-    
+
     if (uploaded) {
       //@ts-ignore
-    const updateData: UpdateCommunityAssetDto = {};
-    console.log(updateData)
-    
+      const updateData: UpdateCommunityAssetDto = {};
+      console.log(updateData);
 
-    if (!community) {
-      throw new Error('Community not found');
-    }
+      if (!community) {
+        throw new Error('Community not found');
+      }
 
-    const commImage = community.images as Prisma.JsonObject;
-    
-    
+      const commImage = community.images as Prisma.JsonObject;
 
-   
-  // @ts-ignore
-    updateData[key] = uploaded?.fileNameHash
-    console.log(updateData)
+      // @ts-ignore
+      updateData[key] = uploaded?.fileNameHash;
+      console.log(updateData);
 
-    const kk= await this.prisma.community.update({
-      where: { address:walletAddress },
-      data: {
-        images: {
-        ...commImage,
-       ...updateData,
-       
-          
-          
+      const kk = await this.prisma.community.update({
+        where: { address: walletAddress },
+        data: {
+          images: {
+            ...commImage,
+            ...updateData,
+          },
         },
-      },
-    });
-    
-    return kk;
-  }
+      });
+
+      return kk;
+    }
 
     // return uploaded;
   }
 
-  async uploadMultipleAsset(walletAddress: string, key:string,assetData: any,) {
-    let uploadedHash = []
+  async uploadMultipleAsset(
+    walletAddress: string,
+    key: string,
+    assetData: any,
+  ) {
+    let uploadedHash = [];
     const community = await this.prisma.community.findUnique({
-      where:{
-        address:walletAddress
+      where: {
+        address: walletAddress,
+      },
+    });
+    for (const asset of assetData) {
+      const uploadData: UploadAssetParams = {
+        file: asset.buffer,
+        fileName: asset.originalname,
+        mimeType: asset.mimetype,
+        folderName: community.name,
+        rootFolderName: process.env.AWS_ROOT_FOLDER,
+      };
+      const uploaded = await AssetUploader.upload(uploadData);
+      if (uploaded) {
+        //@ts-ignore
+        uploadedHash.push(uploaded?.fileNameHash);
       }
-    })
-    for(const asset of assetData){
-    
-    const uploadData: UploadAssetParams = {
-      file: asset.buffer,
-      fileName: asset.originalname,
-      mimeType: asset.mimetype,
-      folderName: community.name,
-      rootFolderName:process.env.AWS_ROOT_FOLDER
-    };
-    const uploaded = await AssetUploader.upload(uploadData);
-    if (uploaded) {
-      //@ts-ignore
-      uploadedHash.push(uploaded?.fileNameHash)
     }
-  }
-  
+
     if (!community) {
       throw new Error('Community not found');
     }
 
     const commImage = community.images as Prisma.JsonObject;
-  
-    const updateData =  this.prisma.community.updateMany({
-      where:{
-        address:walletAddress
-      },
-      data:{
-        images:{
-          ...commImage,
-          gallery:uploadedHash
-        }
-      }
-    })
-    console.log(uploadedHash)
-    return updateData
-  
-  }
 
-  
+    const updateData = this.prisma.community.updateMany({
+      where: {
+        address: walletAddress,
+      },
+      data: {
+        images: {
+          ...commImage,
+          gallery: uploadedHash,
+        },
+      },
+    });
+    console.log(uploadedHash);
+    return updateData;
+  }
 }
