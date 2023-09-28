@@ -222,16 +222,110 @@ export class CommunityService {
     });
   }
 
-  async uploadAsset(walletAddress: string, assetData: any) {
+  async uploadCoverAsset(walletAddress: string, key:string,assetData: any,) {
+
     const uploadData: UploadAssetParams = {
       file: assetData.buffer,
       fileName: assetData.originalname,
       mimeType: assetData.mimetype,
       folderName: 'development',
     };
+
     const uploaded = await AssetUploader.upload(uploadData);
-    return uploaded;
+    
+    if (uploaded) {
+      //@ts-ignore
+    const updateData: UpdateCommunityAssetDto = {};
+    console.log(updateData)
+    const community = await this.prisma.community.findUnique({
+      where: {
+        address:walletAddress
+      },
+    });
+
+    if (!community) {
+      throw new Error('Community not found');
+    }
+
+    const commImage = community.images as Prisma.JsonObject;
+    
+    
+
+    // if (key==='cover') {
+    //   //@ts-ignore
+    //   updateData.cover = uploaded?.ETag;
+    // }
+
+    // if (key==='gallery') {
+    //   updateData.gallery = assetData.gallery;
+    // }
+  // @ts-ignore
+    updateData[key] = uploaded?.ETag
+    console.log(updateData)
+
+    const kk= await this.prisma.community.update({
+      where: { address:walletAddress },
+      data: {
+        images: {
+        ...commImage,
+       ...updateData,
+       
+          
+          
+        },
+      },
+    });
+    
+    return kk;
+  }
 
     // return uploaded;
   }
+
+  async uploadMultipleAsset(walletAddress: string, key:string,assetData: any,) {
+    let uploadedHash = []
+
+    for(const asset of assetData){
+    
+    const uploadData: UploadAssetParams = {
+      file: asset.buffer,
+      fileName: asset.originalname,
+      mimeType: asset.mimetype,
+      folderName: 'development',
+    };
+    const uploaded = await AssetUploader.upload(uploadData);
+    
+    if (uploaded) {
+      //@ts-ignore
+      uploadedHash.push(uploaded?.ETag)
+    }
+  }
+    const community = await this.prisma.community.findUnique({
+      where:{
+        address:walletAddress
+      }
+    })
+    if (!community) {
+      throw new Error('Community not found');
+    }
+
+    const commImage = community.images as Prisma.JsonObject;
+  
+    const updateData =  this.prisma.community.updateMany({
+      where:{
+        address:walletAddress
+      },
+      data:{
+        images:{
+          ...commImage,
+          gallery:uploadedHash
+        }
+      }
+    })
+
+    return updateData
+  
+  }
+
+  
 }
