@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { AssetUploader } from 'rs-asset-uploader';
 import {
+  AssetAvailableUploaders,
   UploadAssetParams
 } from 'rs-asset-uploader/dist/types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -16,6 +17,8 @@ export const awsConfig = {
   region: process.env.AWS_REGION,
   bucket: process.env.AWS_BUCKET_NAME,
 };
+
+AssetUploader.set(AssetAvailableUploaders.S3,awsConfig)
 
 @Injectable()
 export class CommunityService {
@@ -219,7 +222,12 @@ export class CommunityService {
     });
   }
 
-  async uploadAsset(walletAddress: string, assetData: any) {
+  async uploadAsset(walletAddress: string,key:string, assetData: any) {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        address:walletAddress
+      },
+    });
     const uploadData: UploadAssetParams = {
       file: assetData.buffer,
       fileName: assetData.originalname,
@@ -233,11 +241,7 @@ export class CommunityService {
       //@ts-ignore
     const updateData: UpdateCommunityAssetDto = {};
     console.log(updateData)
-    const community = await this.prisma.community.findUnique({
-      where: {
-        address:walletAddress
-      },
-    });
+    
 
     if (!community) {
       throw new Error('Community not found');
@@ -247,16 +251,9 @@ export class CommunityService {
     
     
 
-    // if (key==='cover') {
-    //   //@ts-ignore
-    //   updateData.cover = uploaded?.ETag;
-    // }
-
-    // if (key==='gallery') {
-    //   updateData.gallery = assetData.gallery;
-    // }
+   
   // @ts-ignore
-    updateData[key] = uploaded?.ETag
+    updateData[key] = uploaded?.fileNameHash
     console.log(updateData)
 
     const kk= await this.prisma.community.update({
@@ -280,27 +277,27 @@ export class CommunityService {
 
   async uploadMultipleAsset(walletAddress: string, key:string,assetData: any,) {
     let uploadedHash = []
-
+    const community = await this.prisma.community.findUnique({
+      where:{
+        address:walletAddress
+      }
+    })
     for(const asset of assetData){
     
     const uploadData: UploadAssetParams = {
       file: asset.buffer,
       fileName: asset.originalname,
       mimeType: asset.mimetype,
-      folderName: 'development',
+      folderName: community.name,
+      rootFolderName:process.env.AWS_ROOT_FOLDER
     };
     const uploaded = await AssetUploader.upload(uploadData);
-    
     if (uploaded) {
       //@ts-ignore
-      uploadedHash.push(uploaded?.ETag)
+      uploadedHash.push(uploaded?.fileNameHash)
     }
   }
-    const community = await this.prisma.community.findUnique({
-      where:{
-        address:walletAddress
-      }
-    })
+  
     if (!community) {
       throw new Error('Community not found');
     }
@@ -318,7 +315,7 @@ export class CommunityService {
         }
       }
     })
-
+    console.log(uploadedHash)
     return updateData
   
   }

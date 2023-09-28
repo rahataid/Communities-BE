@@ -90,7 +90,7 @@ export class CommunityController {
     @Param('key') key:string,
     @UploadedFile() file,
   ) {
-    return this.communitiesService.uploadCoverAsset(walletAddress,key, file);
+    return this.communitiesService.uploadAsset(walletAddress,key, file);
   }
 
 
@@ -101,7 +101,6 @@ export class CommunityController {
     @Param('key') key:string,
     @UploadedFiles() files,
   ){
-    console.log(files)
    return this.communitiesService.uploadMultipleAsset(walletAddress,key,files)
   }
 }

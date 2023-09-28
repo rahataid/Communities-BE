@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { UploadAssetParams } from 'asset-uploader';
+import { UploadAssetParams } from 'rs-asset-uploader/dist/types';
 import { CreateCommunityDto } from './create-community.dto';
 
 export class UpdateCommunityDto extends PartialType(CreateCommunityDto) {}
