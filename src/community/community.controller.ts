@@ -7,7 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { CommunityService } from './community.service';
 import { CreateCommunityDto } from './dto/create-community.dto';
@@ -16,7 +19,6 @@ import { CreateManager } from './dto/manager.dto';
 import {
   UpdateCommunityAssetDto,
   UpdateCommunityDto,
-  UploadAssetDto,
 } from './dto/update-community.dto';
 
 @Controller('communities')
@@ -80,8 +82,12 @@ export class CommunityController {
     return this.communitiesService.search(searchKey);
   }
 
-  @Post(':id/upload-asset')
-  uploadAsset(@Param('id') id: string, @Body() assetData: UploadAssetDto) {
-    return this.communitiesService.uploadAsset(+id, assetData);
+  @Post(':walletAddress/upload-asset')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadAsset(
+    @Param('walletAddress') walletAddress: string,
+    @UploadedFile() file,
+  ) {
+    return this.communitiesService.uploadAsset(walletAddress, file);
   }
 }

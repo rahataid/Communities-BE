@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { AssetAvailableUploaders, AssetUploader } from 'asset-uploader';
+import {
+  AssetAvailableUploaders,
+  AssetUploader,
+  UploadAssetParams,
+} from 'asset-uploader';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
-import {
-  UpdateCommunityAssetDto,
-  UploadAssetDto,
-} from './dto/update-community.dto';
+import { UpdateCommunityAssetDto } from './dto/update-community.dto';
 
 const awsConfig = {
   accessKey: 'AKIA2MEMCLOQ7EGTYVJU',
@@ -221,10 +222,16 @@ export class CommunityService {
     });
   }
 
-  async uploadAsset(id: number, assetData: UploadAssetDto) {
-    console.log('first', assetData);
-    const uploaded = await AssetUploader.upload(assetData);
-
+  async uploadAsset(walletAddress: string, assetData: any) {
+    const uploadData: UploadAssetParams = {
+      file: assetData.buffer,
+      fileName: assetData.originalname,
+      mimeType: assetData.mimetype,
+      folderName: 'development',
+    };
+    const uploaded = await AssetUploader.upload(uploadData);
     return uploaded;
+
+    // return uploaded;
   }
 }
