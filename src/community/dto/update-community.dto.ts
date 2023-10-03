@@ -56,7 +56,7 @@ export class UpdateCommunityDto extends PartialType(CreateCommunityDto) {
   })
   @IsNumber()
   longitude?: number;
-  
+
   @ApiProperty({
     type: 'number',
     example: 500,
