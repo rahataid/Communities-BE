@@ -42,17 +42,17 @@ export class CommunityController {
     return this.communitiesService.findOne(address);
   }
 
-  @Patch(':id')
+  @Patch(':address')
   update(
-    @Param('id') id: string,
+    @Param('address') address: string,
     @Body() updateCommunityDto: UpdateCommunityDto,
   ) {
-    return this.communitiesService.update(+id, updateCommunityDto);
+    return this.communitiesService.update(address, updateCommunityDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.communitiesService.remove(+id);
+  @Delete(':address')
+  remove(@Param('address') address: string) {
+    return this.communitiesService.remove(address);
   }
 
   @Patch(':id/asset')

@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
-import { UpdateCommunityAssetDto } from './dto/update-community.dto';
+import { UpdateCommunityAssetDto, UpdateCommunityDto } from './dto/update-community.dto';
 
 export const awsConfig = {
   accessKey: process.env.AWS_ACCESS_KEY_ID,
@@ -129,16 +129,23 @@ export class CommunityService {
     });
   }
 
-  update(id: number, updateCommunityDto: any) {
+  update(address:string, updateCommunityDto: UpdateCommunityDto) {
+    // return {update,updateCommunityDto}
     return this.prisma.community.update({
-      where: { id },
+      where: { address },
       data: updateCommunityDto,
     });
   }
 
-  remove(id: number) {
-    return this.prisma.community.delete({ where: { id } });
-  }
+  async remove(address: string) {
+
+      await this.prisma.community.delete({
+        where:{
+          address: address
+        }
+      })
+       return `Deleted  succesfully`
+    }
 
   async updateAsset(id: number, assetData: UpdateCommunityAssetDto) {
     const updateData: UpdateCommunityAssetDto = {};
@@ -307,8 +314,7 @@ export class CommunityService {
       },
       data: {
         images: {
-          ...commImage,
-          gallery: uploadedHash,
+          gallery: uploadedHash
         },
       },
     });
