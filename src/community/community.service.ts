@@ -13,8 +13,8 @@ import { UpdateCommunityAssetDto, UpdateCommunityDto } from './dto/update-commun
 
 export const awsConfig = {
   accessKey: process.env.AWS_ACCESS_KEY_ID,
-  secret: 'ceYDNMdF0uOGfy/ZxySaO3nfYi3Vcf20JXq+D1F3',
-  // secret: process.env.AWS_SECRET_ACCESS_KEY,
+  // secret: 'ceYDNMdF0uOGfy/ZxySaO3nfYi3Vcf20JXq+D1F3',
+  secret: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
   bucket: process.env.AWS_BUCKET_NAME,
 };
@@ -281,7 +281,7 @@ export class CommunityService {
     key: string,
     assetData: any,
   ) {
-    let uploadedHash = [];
+    const uploadedHash = [];
     const community = await this.prisma.community.findUnique({
       where: {
         address: walletAddress,
