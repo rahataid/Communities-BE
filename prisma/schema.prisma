@@ -21,6 +21,7 @@ model Community {
   longitude       Float?
   latitude        Float?
   country         String
+  district        String?
   fundRaisedUsd   Float                   @default(0)
   categoryId      Int
   fundRaisedLocal String                  @default("0")

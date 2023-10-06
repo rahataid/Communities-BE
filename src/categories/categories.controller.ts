@@ -9,8 +9,8 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createCategoryDto:CreateCategoryDto){
-    return this.categoriesService.create(createCategoryDto)
+  async create(@Body() createCategoryDto:CreateCategoryDto){
+     await this.categoriesService.create(createCategoryDto)
   }
 
   @Get()

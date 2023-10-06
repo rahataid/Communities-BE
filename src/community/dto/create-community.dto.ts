@@ -64,6 +64,15 @@ export class CreateCommunityDto {
   country: string;
 
   @ApiProperty({
+    type: 'string',
+    example: 'Rupandehi',
+    description: 'Community District',
+    required: false,
+  })
+  @IsString()
+  district?: string;
+
+  @ApiProperty({
     type: 'number',
     example: 500,
     description: 'Budget of the community',

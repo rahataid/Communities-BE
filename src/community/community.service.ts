@@ -81,6 +81,7 @@ export class CommunityService {
       description: true,
       address: true,
       images: true,
+      district:true
     };
     const orderBy: Prisma.CommunityOrderByWithRelationInput = {
       name: 'asc',
