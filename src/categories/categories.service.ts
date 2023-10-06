@@ -8,11 +8,13 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     const { name } = createCategoryDto;
-    return this.prisma.category.create({
+    await  this.prisma.category.create({
       data: {
-        name,
+        name:name
       },
     });
+
+    return {message:"Category created Successfully", status:201}
   }
 
   findAll() {

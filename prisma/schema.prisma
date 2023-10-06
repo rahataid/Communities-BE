@@ -21,6 +21,7 @@ model Community {
   longitude       Float?
   latitude        Float?
   country         String
+  district        String?
   fundRaisedUsd   Float                   @default(0)
   categoryId      Int
   fundRaisedLocal String                  @default("0")
@@ -51,7 +52,7 @@ model CommunityManager {
 
 model CommunityDemographics {
   id                  Int       @id @default(autoincrement())
-  community           Community @relation(fields: [communityId], references: [id])
+  community           Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   communityId         Int
   total_beneficiaries Int       @default(0)
   gender_male         Int?

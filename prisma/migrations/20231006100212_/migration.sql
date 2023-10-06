@@ -10,6 +10,7 @@ CREATE TABLE "tbl_communities" (
     "longitude" DOUBLE PRECISION,
     "latitude" DOUBLE PRECISION,
     "country" TEXT NOT NULL,
+    "district" TEXT,
     "fundRaisedUsd" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "categoryId" INTEGER NOT NULL,
     "fundRaisedLocal" TEXT NOT NULL DEFAULT '0',
@@ -83,4 +84,4 @@ CREATE UNIQUE INDEX "tbl_communities_address_key" ON "tbl_communities"("address"
 ALTER TABLE "tbl_communities" ADD CONSTRAINT "tbl_communities_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "tbl_categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tbl_communityDemographics" ADD CONSTRAINT "tbl_communityDemographics_communityId_fkey" FOREIGN KEY ("communityId") REFERENCES "tbl_communities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tbl_communityDemographics" ADD CONSTRAINT "tbl_communityDemographics_communityId_fkey" FOREIGN KEY ("communityId") REFERENCES "tbl_communities"("id") ON DELETE CASCADE ON UPDATE CASCADE;

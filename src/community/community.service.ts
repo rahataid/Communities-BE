@@ -9,12 +9,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
-import { UpdateCommunityAssetDto } from './dto/update-community.dto';
+import {
+  UpdateCommunityAssetDto,
+  UpdateCommunityDto,
+} from './dto/update-community.dto';
 
 export const awsConfig = {
   accessKey: process.env.AWS_ACCESS_KEY_ID,
-  secret: 'ceYDNMdF0uOGfy/ZxySaO3nfYi3Vcf20JXq+D1F3',
-  // secret: process.env.AWS_SECRET_ACCESS_KEY,
+  // secret: 'ceYDNMdF0uOGfy/ZxySaO3nfYi3Vcf20JXq+D1F3',
+  secret: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
   bucket: process.env.AWS_BUCKET_NAME,
 };
@@ -78,6 +81,7 @@ export class CommunityService {
       description: true,
       address: true,
       images: true,
+      district:true
     };
     const orderBy: Prisma.CommunityOrderByWithRelationInput = {
       name: 'asc',
@@ -129,54 +133,68 @@ export class CommunityService {
     });
   }
 
-  update(id: number, updateCommunityDto: any) {
-    return this.prisma.community.update({
-      where: { id },
-      data: updateCommunityDto,
-    });
-  }
-
-  remove(id: number) {
-    return this.prisma.community.delete({ where: { id } });
-  }
-
-  async updateAsset(id: number, assetData: UpdateCommunityAssetDto) {
-    const updateData: UpdateCommunityAssetDto = {};
-
-    const community = await this.prisma.community.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!community) {
-      throw new Error('Community not found');
-    }
-
-    const commImage = community.images as Prisma.JsonObject;
-
-    if (assetData.logo) {
-      updateData.logo = assetData.logo;
-    }
-
-    if (assetData.cover) {
-      updateData.cover = assetData.cover;
-    }
-
-    if (assetData.gallery) {
-      updateData.gallery = assetData.gallery;
-    }
-
-    return this.prisma.community.update({
-      where: { id },
+  async update(address: string, updateCommunityDto: UpdateCommunityDto) {
+    const jkl = await this.prisma.community.update({
+      where: { address },
       data: {
-        images: {
-          ...commImage,
-          ...updateData,
-        },
+        name: updateCommunityDto.name,
+        address: updateCommunityDto.address,
+        categoryId: updateCommunityDto.categoryId,
+        latitude: updateCommunityDto.latitude,
+        longitude: updateCommunityDto.longitude,
+        fundRaisedUsd: updateCommunityDto.fundRaisedUsd,
+        fundRaisedLocal: updateCommunityDto.fundRaisedLocal,
+        description: updateCommunityDto.description,
+        country: updateCommunityDto.country,
       },
     });
+
+    return jkl;
   }
+
+  async remove(address: string) {
+    await this.prisma.community.delete({
+      where: {
+        address: address,
+      },
+    });
+    return `Deleted  succesfully`;
+  }
+
+  // async updateAsset(address: string, assetData: UpdateCommunityAssetDto) {
+  //   const updateData: UpdateCommunityAssetDto = {};
+
+  //   const community = await this.prisma.community.findUnique({
+  //     where: {
+  //       address,
+  //     },
+  //   });
+
+  //   if (!community) {
+  //     throw new Error('Community not found');
+  //   }
+
+  //   const commImage = community.images as Prisma.JsonObject;
+
+  //   if (assetData.logo) {
+  //     updateData.logo = assetData.logo;
+  //   }
+
+  //   if (assetData.cover) {
+  //     updateData.cover = assetData.cover;
+  //   }
+
+  //   if (assetData.gallery) {
+  //     updateData.gallery = assetData.gallery;
+  //   }
+
+  //   return this.prisma.community.update({
+  //     where: { address },
+  //     data: {
+
+  //     },
+  //   });
+  // }
 
   async search(searchKey: string) {
     return this.prisma.community.findMany({
@@ -274,12 +292,14 @@ export class CommunityService {
     key: string,
     assetData: any,
   ) {
-    let uploadedHash = [];
     const community = await this.prisma.community.findUnique({
       where: {
         address: walletAddress,
       },
     });
+    //@ts-ignore
+    const uploadedHash = [];
+
     for (const asset of assetData) {
       const uploadData: UploadAssetParams = {
         file: asset.buffer,
@@ -299,6 +319,7 @@ export class CommunityService {
       throw new Error('Community not found');
     }
 
+    //@ts-ignore
     const commImage = community.images as Prisma.JsonObject;
 
     const updateData = this.prisma.community.updateMany({
@@ -312,7 +333,6 @@ export class CommunityService {
         },
       },
     });
-    console.log(uploadedHash);
     return updateData;
   }
 }

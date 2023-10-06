@@ -9,7 +9,7 @@ import {
   Query,
   UploadedFile,
   UploadedFiles,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,10 +17,6 @@ import { CommunityService } from './community.service';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateTagsDto } from './dto/create-tags.dto';
 import { CreateManager } from './dto/manager.dto';
-import {
-  UpdateCommunityAssetDto,
-  UpdateCommunityDto,
-} from './dto/update-community.dto';
 
 @Controller('communities')
 @ApiTags('communities')
@@ -42,26 +38,23 @@ export class CommunityController {
     return this.communitiesService.findOne(address);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCommunityDto: UpdateCommunityDto,
-  ) {
-    return this.communitiesService.update(+id, updateCommunityDto);
+  @Patch(':address/edit')
+  update(@Param('address') address: string, @Body() data: any) {
+    return this.communitiesService.update(address, data);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.communitiesService.remove(+id);
+  @Delete(':address/delete')
+  remove(@Param('address') address: string) {
+    return this.communitiesService.remove(address);
   }
 
-  @Patch(':id/asset')
-  updateAsset(
-    @Param('id') id: string,
-    @Body() assetData: UpdateCommunityAssetDto,
-  ) {
-    return this.communitiesService.updateAsset(+id, assetData);
-  }
+  // @Patch(':address/asset')
+  // updateAsset(
+  //   @Param('address') address: string,
+  //   @Body() assetData: UpdateCommunityAssetDto,
+  // ) {
+  //   return this.communitiesService.updateAsset(address, assetData);
+  // }
 
   @Post('tags/bulk')
   createTagsBulk(@Body() tags: CreateTagsDto) {
@@ -87,20 +80,23 @@ export class CommunityController {
   @UseInterceptors(FileInterceptor('file'))
   uploadAsset(
     @Param('walletAddress') walletAddress: string,
-    @Param('key') key:string,
+    @Param('key') key: string,
     @UploadedFile() file,
   ) {
-    return this.communitiesService.uploadAsset(walletAddress,key, file);
+    return this.communitiesService.uploadAsset(walletAddress, key, file);
   }
-
 
   @Post(':walletAddress/upload-asset/:key/multiple')
   @UseInterceptors(AnyFilesInterceptor())
   uploadMultipleAsset(
-    @Param('walletAddress') walletAddress:string,
-    @Param('key') key:string,
+    @Param('walletAddress') walletAddress: string,
+    @Param('key') key: string,
     @UploadedFiles() files,
-  ){
-   return this.communitiesService.uploadMultipleAsset(walletAddress,key,files)
+  ) {
+    return this.communitiesService.uploadMultipleAsset(
+      walletAddress,
+      key,
+      files,
+    );
   }
 }
