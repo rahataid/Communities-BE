@@ -51,7 +51,7 @@ model CommunityManager {
 
 model CommunityDemographics {
   id                  Int       @id @default(autoincrement())
-  community           Community @relation(fields: [communityId], references: [id])
+  community           Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   communityId         Int
   total_beneficiaries Int       @default(0)
   gender_male         Int?

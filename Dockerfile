@@ -12,7 +12,7 @@ RUN yarn build
 FROM node:18-alpine3.17
 RUN apk add --update bash git
 WORKDIR /usr/src/app
-COPY --from=builder /opt/app/.env ./
+# COPY --from=builder /opt/app/.env ./
 COPY --from=builder /opt/app/dist ./dist/
 COPY --from=builder /opt/app/node_modules ./node_modules/
 COPY --from=builder /opt/app/package.json ./package.json
