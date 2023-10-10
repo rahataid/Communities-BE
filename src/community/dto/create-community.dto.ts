@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateCommunityDto {
   @ApiProperty({
@@ -43,6 +43,7 @@ export class CreateCommunityDto {
     required: false,
   })
   @IsNumber()
+  @IsOptional()
   latitude?: number;
 
   @ApiProperty({
@@ -52,6 +53,7 @@ export class CreateCommunityDto {
     required: false,
   })
   @IsNumber()
+  @IsOptional()
   longitude?: number;
 
   @ApiProperty({
@@ -70,6 +72,7 @@ export class CreateCommunityDto {
     required: false,
   })
   @IsString()
+  @IsOptional()
   district?: string;
 
   @ApiProperty({
@@ -79,7 +82,8 @@ export class CreateCommunityDto {
     required: true,
   })
   @IsNumber()
-  fundRaisedUsd: number;
+  @IsOptional()
+  fundRaisedUsd?: number;
 
   @ApiProperty({
     type: 'string',
@@ -88,7 +92,8 @@ export class CreateCommunityDto {
     required: true,
   })
   @IsString()
-  fundRaisedLocal: string;
+  @IsOptional()
+  fundRaisedLocal?: string;
 
   @ApiProperty({
     type: 'string',
@@ -107,6 +112,7 @@ export class CreateCommunityDto {
     required: false,
   })
   @IsArray()
+  @IsOptional()
   managers: string;
 
   @ApiProperty({
@@ -120,7 +126,8 @@ export class CreateCommunityDto {
       ],
     },
   })
-  images: Record<string, string>;
+  @IsOptional()
+  images?: Record<string, string>;
 
   @ApiProperty({
     type: 'array',
@@ -130,6 +137,7 @@ export class CreateCommunityDto {
     required: false,
   })
   @IsArray()
+  @IsOptional()
   tags?: string[];
 
   @ApiProperty({
@@ -145,5 +153,6 @@ export class CreateCommunityDto {
       internet_no: 25,
     },
   })
+  @IsOptional()
   summary?: any;
 }

@@ -83,6 +83,9 @@ export class UpdateCommunityDto extends PartialType(CreateCommunityDto) {
   })
   @IsString()
   localCurrency: string;
+
+  @IsString()
+  district?: string;
 }
 
 export class UpdateCommunityAssetDto {

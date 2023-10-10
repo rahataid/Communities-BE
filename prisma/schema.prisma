@@ -26,11 +26,11 @@ model Community {
   categoryId      Int
   fundRaisedLocal String                  @default("0")
   localCurrency   String //NPR, INR, USD
-  category        Category                @relation(fields: [categoryId], references: [id])
+  category        Category                @relation(fields: [categoryId], references: [id], onUpdate: Cascade)
   summary         CommunityDemographics[]
   tags            String[]                @default([])
   managers        String[]                @default([])
-  images          Json
+  images          Json?                    
   createdAt       DateTime                @default(now())
   updatedAt       DateTime                @updatedAt
 
@@ -62,7 +62,7 @@ model CommunityDemographics {
   bank_no             Int?
   internet_yes        Int?
   internet_no         Int?
-  extras              Json
+  extras              Json?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 

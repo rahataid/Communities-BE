@@ -29,21 +29,18 @@ export class CommunityService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createCommunityDto: CreateCommunityDto) {
-    const { tags, summary, categoryId, ...communityData } = createCommunityDto;
-
+    const { address, name, categoryId, country, localCurrency, description } =
+      createCommunityDto;
     return this.prisma.community.create({
       data: {
-        ...communityData, // Explicit cast to the appropriate type
-        tags,
+        localCurrency,
+        name,
+        address,
+        description,
+        country,
         category: {
           connect: {
             id: categoryId,
-          },
-        },
-
-        summary: {
-          create: {
-            ...summary,
           },
         },
       },
@@ -81,31 +78,11 @@ export class CommunityService {
       description: true,
       address: true,
       images: true,
-      district:true
+      district: true,
     };
     const orderBy: Prisma.CommunityOrderByWithRelationInput = {
       name: 'asc',
     };
-    // return this.prisma.community.findMany({
-    //   where,
-    //   select: {
-    //     category: true,
-    //     country: true,
-    //     name: true,
-    //     id: true,
-    //     fundRaisedUsd: true,
-    //     fundRaisedLocal: true,
-    //     localCurrency: true,
-    //     latitude: true,
-    //     longitude: true,
-    //     description: true,
-    //     address: true,
-    //     images: true,
-    //   },
-    //   orderBy: {
-    //     name: 'asc',
-    //   },
-    // });
 
     return paginate(
       this.prisma.community,
@@ -146,6 +123,7 @@ export class CommunityService {
         fundRaisedLocal: updateCommunityDto.fundRaisedLocal,
         description: updateCommunityDto.description,
         country: updateCommunityDto.country,
+        district: updateCommunityDto.district,
       },
     });
 
