@@ -8,7 +8,21 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     const { name } = createCategoryDto;
-    console.log(name);
+    const category = await this.prisma.category.findMany({
+      select: {
+        id: true,
+      },
+    });
+    if (category.length > 0) {
+      const len = category[category.length - 1];
+      await this.prisma.category.create({
+        data: {
+          id: len.id + 1,
+          name: name,
+        },
+      });
+      return { message: 'Category created Successfully', status: 201 };
+    }
 
     await this.prisma.category.create({
       data: {
