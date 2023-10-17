@@ -48,19 +48,6 @@ export class ManagersService {
   }
 
   async update(updateManagerDto: UpdateManagerDto) {
-    console.log(updateManagerDto);
-
-    // return `This action updates a #${id} manager`;
-
-    // const updateComunityManager = await this.prisma.communityManager.update({
-    //   where: {
-    //     id: parseInt(updateManagerDto.id),
-    //   },
-    //   data: {
-    //     communities: updateManagerDto.communityName,
-    //   },
-    // });
-    // console.log(updateComunityManager);
     const existingCommunityManager =
       await this.prisma.communityManager.findUnique({
         where: {
@@ -69,28 +56,28 @@ export class ManagersService {
       });
 
     if (!existingCommunityManager) {
-      // Handle the case where the record with the provided ID is not found.
-      // You can return an error or take appropriate action.
       return;
     }
+    const check = existingCommunityManager.communities.find(
+      (communities) => communities === updateManagerDto.communityName,
+    );
 
-    // Retrieve the existing communities and update them with new values
     const updatedCommunities = [
       ...existingCommunityManager.communities,
       updateManagerDto.communityName,
     ];
 
-    // Update the record with the new communities
+    const filteredCommunities = check
+      ? existingCommunityManager.communities
+      : updatedCommunities;
     const updatedCommunityManager = await this.prisma.communityManager.update({
       where: {
         id: parseInt(updateManagerDto.id),
       },
       data: {
-        communities: updatedCommunities,
+        communities: filteredCommunities,
       },
     });
-
-    // updatedCommunityManager now contains the updated record with both old and new values
 
     return updatedCommunityManager;
   }
