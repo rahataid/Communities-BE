@@ -79,6 +79,7 @@ export class CommunityService {
       address: true,
       images: true,
       district: true,
+      managers: true,
     };
     const orderBy: Prisma.CommunityOrderByWithRelationInput = {
       name: 'asc',
@@ -124,6 +125,7 @@ export class CommunityService {
         description: updateCommunityDto.description,
         country: updateCommunityDto.country,
         district: updateCommunityDto.district,
+        managers: updateCommunityDto.managers,
       },
     });
 
@@ -210,11 +212,12 @@ export class CommunityService {
   }
 
   async createCommunityManager(manager: CreateManager) {
-    const { communityId, ...data } = manager;
-
     return this.prisma.communityManager.create({
       data: {
-        ...data,
+        name: manager.name,
+        email: manager.email,
+        phone: manager.phone.toString(),
+        walletAddress: manager.walletAddress,
       },
     });
   }
