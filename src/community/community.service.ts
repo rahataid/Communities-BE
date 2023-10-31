@@ -232,9 +232,7 @@ export class CommunityService {
       file: assetData.buffer,
       fileName: assetData.originalname,
       mimeType: assetData.mimetype,
-      rootFolderName: process.env.STAGE_ENV
-        ? 'development'
-        : process.env.AWS_ROOT_FOLDER,
+      rootFolderName: process.env.AWS_ROOT_FOLDER,
       folderName: community.name,
     };
     const uploaded = await AssetUploader.upload(uploadData);
@@ -289,9 +287,7 @@ export class CommunityService {
         fileName: asset.originalname,
         mimeType: asset.mimetype,
         folderName: community.name,
-        rootFolderName: process.env.STAGE_ENV
-          ? 'development'
-          : process.env.AWS_ROOT_FOLDER,
+        rootFolderName: process.env.AWS_ROOT_FOLDER,
       };
       const uploaded = await AssetUploader.upload(uploadData);
       if (uploaded) {
