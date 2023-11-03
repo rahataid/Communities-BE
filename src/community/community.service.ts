@@ -43,6 +43,11 @@ export class CommunityService {
             id: categoryId,
           },
         },
+        summary: {
+          create: {
+            total_beneficiaries: 0,
+          },
+        },
       },
     });
   }
@@ -112,6 +117,14 @@ export class CommunityService {
   }
 
   async update(address: string, updateCommunityDto: UpdateCommunityDto) {
+    const findCommunity = await this.prisma.communityDemographics.findFirst({
+      where: {
+        community: {
+          address: address,
+        },
+      },
+    });
+
     const jkl = await this.prisma.community.update({
       where: { address },
       data: {
@@ -126,6 +139,16 @@ export class CommunityService {
         country: updateCommunityDto.country,
         district: updateCommunityDto.district,
         managers: updateCommunityDto.managers,
+        summary: {
+          update: {
+            where: {
+              id: findCommunity.id,
+            },
+            data: {
+              total_beneficiaries: updateCommunityDto.beneficiaries,
+            },
+          },
+        },
       },
     });
 
