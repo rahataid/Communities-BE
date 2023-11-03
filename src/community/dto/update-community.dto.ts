@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { UploadAssetParams } from 'rs-asset-uploader/dist/types';
 import { CreateCommunityDto } from './create-community.dto';
 
@@ -86,6 +86,21 @@ export class UpdateCommunityDto extends PartialType(CreateCommunityDto) {
 
   @IsString()
   district?: string;
+
+  @ApiProperty({
+    example: {
+      total_beneficiaries: 22,
+    },
+  })
+  @IsOptional()
+  beneficiaries?: any;
+  @ApiProperty({
+    example: {
+      total_beneficiaries: 22,
+    },
+  })
+  @IsOptional()
+  summary?: any;
 }
 
 export class UpdateCommunityAssetDto {
