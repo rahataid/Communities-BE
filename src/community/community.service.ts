@@ -125,34 +125,47 @@ export class CommunityService {
       },
     });
 
-    const jkl = await this.prisma.community.update({
-      where: { address },
-      data: {
-        name: updateCommunityDto.name,
-        address: updateCommunityDto.address,
-        categoryId: updateCommunityDto.categoryId,
-        latitude: updateCommunityDto.latitude,
-        longitude: updateCommunityDto.longitude,
-        fundRaisedUsd: updateCommunityDto.fundRaisedUsd,
-        fundRaisedLocal: updateCommunityDto.fundRaisedLocal,
-        description: updateCommunityDto.description,
-        country: updateCommunityDto.country,
-        district: updateCommunityDto.district,
-        managers: updateCommunityDto.managers,
-        summary: {
-          update: {
-            where: {
-              id: findCommunity.id,
-            },
-            data: {
-              total_beneficiaries: updateCommunityDto.beneficiaries,
+    if (findCommunity === null) {
+      await this.prisma.communityDemographics.create({
+        data: {
+          total_beneficiaries: updateCommunityDto.beneficiaries,
+          community: {
+            connect: {
+              address: address,
             },
           },
         },
-      },
-    });
+      });
+    } else {
+      const jkl = await this.prisma.community.update({
+        where: { address },
+        data: {
+          name: updateCommunityDto.name,
+          address: updateCommunityDto.address,
+          categoryId: updateCommunityDto.categoryId,
+          latitude: updateCommunityDto.latitude,
+          longitude: updateCommunityDto.longitude,
+          fundRaisedUsd: updateCommunityDto.fundRaisedUsd,
+          fundRaisedLocal: updateCommunityDto.fundRaisedLocal,
+          description: updateCommunityDto.description,
+          country: updateCommunityDto.country,
+          district: updateCommunityDto.district,
+          managers: updateCommunityDto.managers,
+          summary: {
+            update: {
+              where: {
+                id: findCommunity.id,
+              },
+              data: {
+                total_beneficiaries: updateCommunityDto.beneficiaries,
+              },
+            },
+          },
+        },
+      });
 
-    return jkl;
+      return jkl;
+    }
   }
 
   async remove(address: string) {
