@@ -99,4 +99,15 @@ export class CommunityController {
       files,
     );
   }
+
+  @Patch(':walletAddress/images/gallery')
+  updateImages(
+    @Param('walletAddress') walletAddress: string,
+    @Body() body: any,
+  ) {
+    return this.communitiesService.removeImageAssets(
+      walletAddress,
+      body?.fileName,
+    );
+  }
 }
