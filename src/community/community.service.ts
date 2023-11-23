@@ -100,6 +100,16 @@ export class CommunityService {
     );
   }
 
+  async getTheCommunityGeoLocation() {
+    return await this.prisma.community.findMany({
+      select: {
+        latitude: true,
+        longitude: true,
+        country: true,
+      },
+    });
+  }
+
   findOne(address: string) {
     if (!address) {
       throw new Error('Address not provided');

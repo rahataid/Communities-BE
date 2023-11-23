@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { paginate } from 'src/utils/paginate';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -32,7 +35,45 @@ export class CategoriesService {
     return { message: 'Category created Successfully', status: 201 };
   }
 
-  findAll() {
-    return this.prisma.category.findMany();
+  // findAll() {
+  //   return this.prisma.category.findMany();
+  // }
+
+  findAll(query: any) {
+    const where: Prisma.CategoryWhereInput = {};
+
+    if (query.name) {
+      where.name = {
+        contains: query.name,
+        mode: 'insensitive',
+      };
+    }
+
+    const select: Prisma.CategorySelect = {
+      name: true,
+      id: true,
+    };
+    const orderBy: Prisma.CategoryOrderByWithRelationInput = {
+      name: 'asc',
+    };
+
+    return paginate(
+      this.prisma.category,
+      { where, select, orderBy },
+      {
+        page: query.page,
+        perPage: query.perPage,
+      },
+    );
+  }
+  async edit(id: string, updateCategories: UpdateCategoryDto) {
+    await this.prisma.category.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        ...updateCategories,
+      },
+    });
   }
 }

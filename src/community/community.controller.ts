@@ -33,6 +33,11 @@ export class CommunityController {
     return this.communitiesService.findAll(query);
   }
 
+  @Get('geoLocation')
+  getGeoLocation() {
+    return this.communitiesService.getTheCommunityGeoLocation();
+  }
+
   @Get(':address')
   findOne(@Param('address') address: string) {
     return this.communitiesService.findOne(address);
@@ -47,14 +52,6 @@ export class CommunityController {
   remove(@Param('address') address: string) {
     return this.communitiesService.remove(address);
   }
-
-  // @Patch(':address/asset')
-  // updateAsset(
-  //   @Param('address') address: string,
-  //   @Body() assetData: UpdateCommunityAssetDto,
-  // ) {
-  //   return this.communitiesService.updateAsset(address, assetData);
-  // }
 
   @Post('tags/bulk')
   createTagsBulk(@Body() tags: CreateTagsDto) {
