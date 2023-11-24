@@ -100,6 +100,16 @@ export class CommunityService {
     );
   }
 
+  async getTheCommunityGeoLocation() {
+    return await this.prisma.community.findMany({
+      select: {
+        latitude: true,
+        longitude: true,
+        country: true,
+      },
+    });
+  }
+
   findOne(address: string) {
     if (!address) {
       throw new Error('Address not provided');
@@ -309,14 +319,21 @@ export class CommunityService {
     key: string,
     assetData: any,
   ) {
+    console.log(assetData);
     const community = await this.prisma.community.findUnique({
       where: {
         address: walletAddress,
       },
     });
+    // const uploadedHash = [];
+    // if (!community?.images?.gallery) {
+    //   uploadedHash.push(community?.images?.gallery);
+    // }
     //@ts-ignore
-    const uploadedHash = [];
-
+    const uploadedHash = community?.images?.gallery
+      ? //@ts-ignore
+        [...community?.images?.gallery]
+      : [];
     for (const asset of assetData) {
       const uploadData: UploadAssetParams = {
         file: asset.buffer,
@@ -331,7 +348,6 @@ export class CommunityService {
         uploadedHash.push(uploaded?.fileNameHash);
       }
     }
-
     if (!community) {
       throw new Error('Community not found');
     }
@@ -350,6 +366,39 @@ export class CommunityService {
         },
       },
     });
+    console.log(updateData);
+    return updateData;
+  }
+
+  async removeImageAssets(address: string, fileName: string) {
+    const community = await this.prisma.community.findUnique({
+      where: {
+        address: address,
+      },
+      select: {
+        images: true,
+      },
+    });
+
+    //@ts-ignore
+    const remainingImages = community?.images?.gallery.filter(
+      (i) => i !== fileName,
+    );
+
+    const commImage = community.images as Prisma.JsonObject;
+
+    const updateData = this.prisma.community.updateMany({
+      where: {
+        address: address,
+      },
+      data: {
+        images: {
+          ...commImage,
+          gallery: remainingImages,
+        },
+      },
+    });
+
     return updateData;
   }
 }
