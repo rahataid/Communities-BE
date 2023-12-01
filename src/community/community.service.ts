@@ -85,6 +85,8 @@ export class CommunityService {
       images: true,
       district: true,
       managers: true,
+      summary: true,
+      createdAt: true,
     };
     const orderBy: Prisma.CommunityOrderByWithRelationInput = {
       name: 'asc',
@@ -319,16 +321,12 @@ export class CommunityService {
     key: string,
     assetData: any,
   ) {
-    console.log(assetData);
     const community = await this.prisma.community.findUnique({
       where: {
         address: walletAddress,
       },
     });
-    // const uploadedHash = [];
-    // if (!community?.images?.gallery) {
-    //   uploadedHash.push(community?.images?.gallery);
-    // }
+
     //@ts-ignore
     const uploadedHash = community?.images?.gallery
       ? //@ts-ignore
