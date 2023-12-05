@@ -76,4 +76,18 @@ export class CategoriesService {
       },
     });
   }
+
+  async countCommunity() {
+    return await this.prisma.category.findMany({
+      select: {
+        name: true,
+        communities: {
+          select: {
+            name: true,
+          },
+        },
+        _count: true,
+      },
+    });
+  }
 }
