@@ -20,7 +20,10 @@ export class CategoriesController {
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     await this.categoriesService.create(createCategoryDto);
   }
-
+  @Get('count')
+  communityCount() {
+    return this.categoriesService.countCommunity();
+  }
   @Get()
   findAll(@Query() query?: any) {
     return this.categoriesService.findAll(query);
