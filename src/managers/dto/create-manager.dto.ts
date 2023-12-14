@@ -25,4 +25,7 @@ export class CreateManagerDto {
   })
   @IsString()
   walletAddress: string;
+
+  @IsString()
+  communities: string;
 }

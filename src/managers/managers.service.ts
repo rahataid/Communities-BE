@@ -9,18 +9,38 @@ import { UpdateManagerDto } from './dto/update-manager.dto';
 export class ManagersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(manager: CreateManagerDto) {
-    return this.prisma.communityManager.create({
-      data: {
-        name: manager.name,
-        email: manager.email,
-        phone: manager.phone.toString(),
-        walletAddress: manager.walletAddress,
+  async create(manager: CreateManagerDto) {
+    const findManager = await this.prisma.communityManager.findFirst({
+      where: {
+        walletAddress: manager?.walletAddress,
       },
     });
+    if (findManager === null) {
+      return await this.prisma.communityManager.create({
+        data: {
+          name: manager.name,
+          email: manager.email,
+          phone: manager.phone.toString(),
+          walletAddress: manager.walletAddress,
+          communities: manager.communities,
+        },
+      });
+    } else {
+      return await this.prisma.communityManager.update({
+        where: {
+          id: findManager?.id,
+        },
+        data: {
+          communities: {
+            push: manager?.communities,
+          },
+        },
+      });
+    }
   }
 
   findAll(query: any) {
+    console.log(query);
     const where: Prisma.CommunityManagerWhereInput = {};
 
     const select: Prisma.CommunityManagerSelect = {
@@ -30,6 +50,7 @@ export class ManagersService {
       name: true,
       phone: true,
       walletAddress: true,
+      createdAt: true,
     };
 
     const orderBy: Prisma.CommunityManagerOrderByWithRelationInput = {
@@ -43,43 +64,26 @@ export class ManagersService {
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} manager`;
+  async findOne(address: string, query: any) {
+    const where: Prisma.CommunityManagerWhereInput = {
+      communities: {
+        has: address,
+      },
+    };
+
+    const orderBy: Prisma.CommunityManagerOrderByWithRelationInput = {
+      createdAt: 'asc',
+    };
+
+    return paginate(
+      this.prisma.communityManager,
+      { where, orderBy },
+      { page: query.page, perPage: query.perPage },
+    );
   }
 
   async update(updateManagerDto: UpdateManagerDto) {
-    const existingCommunityManager =
-      await this.prisma.communityManager.findUnique({
-        where: {
-          id: parseInt(updateManagerDto.id),
-        },
-      });
-
-    if (!existingCommunityManager) {
-      return;
-    }
-    const check = existingCommunityManager.communities.find(
-      (communities) => communities === updateManagerDto.communityName,
-    );
-
-    const updatedCommunities = [
-      ...existingCommunityManager.communities,
-      updateManagerDto.communityName,
-    ];
-
-    const filteredCommunities = check
-      ? existingCommunityManager.communities
-      : updatedCommunities;
-    const updatedCommunityManager = await this.prisma.communityManager.update({
-      where: {
-        id: parseInt(updateManagerDto.id),
-      },
-      data: {
-        communities: filteredCommunities,
-      },
-    });
-
-    return updatedCommunityManager;
+    return 'Update manager';
   }
 
   remove(id: number) {
