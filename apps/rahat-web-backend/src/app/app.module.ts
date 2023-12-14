@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ManagersModule } from './managers/managers.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RsUserModule } from '@rahat/user';
+import { CommunityModule } from './community/community.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RsUserModule } from '@rahat/user';
     PrismaModule,
     CategoriesModule,
     ManagersModule,
+    CommunityModule,
   ],
   controllers: [AppController],
   providers: [
