@@ -1,0 +1,10 @@
+Setup monorepo with NestJS ✅
+Initiate Prisma ✅
+Update prisma schema ✅
+Migrate prisma ✅
+Copy prisma lib ✅
+Connect prisma DB ✅
+
+Setup Main.ts ✅
+Setup Swagger ✅
+Setup Sample (Category) API ✅
