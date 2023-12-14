@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class CreateManagerDto {
   @ApiProperty({
@@ -25,4 +25,7 @@ export class CreateManagerDto {
   })
   @IsString()
   walletAddress: string;
+
+  @IsOptional()
+  communities: string[];
 }

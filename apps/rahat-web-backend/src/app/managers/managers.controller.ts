@@ -28,9 +28,9 @@ export class ManagersController {
     return this.managersService.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.managersService.findOne(+id);
+  @Get('list/:address')
+  findOne(@Param('address') address: string, @Query() query?: any) {
+    return this.managersService.findOne(address, query);
   }
 
   @Patch('update')
