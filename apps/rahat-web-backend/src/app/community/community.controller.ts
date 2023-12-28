@@ -3,12 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
   Query,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
@@ -17,6 +20,9 @@ import { CommunityService } from './community.service';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateTagsDto } from './dto/create-tags.dto';
 import { CreateManager } from './dto/manager.dto';
+import { UpdateByManagerDto } from './dto/update-community.dto';
+import { AbilitiesGuard, CheckAbilities, JwtGuard } from '@rahat/user';
+import { ACTIONS, SUBJECTS } from 'libs/user/src/lib/constants';
 
 @Controller('communities')
 @ApiTags('communities')
@@ -41,6 +47,16 @@ export class CommunityController {
   @Get(':address')
   findOne(@Param('address') address: string) {
     return this.communitiesService.findOne(address);
+  }
+  @HttpCode(HttpStatus.OK)
+  @CheckAbilities({ action: ACTIONS.MANAGE, subject: SUBJECTS.ALL })
+  // @UseGuards(JwtGuard, AbilitiesGuard)
+  @Patch(':address/update')
+  async updateByManager(
+    @Param('address') address: string,
+    @Body() data: UpdateByManagerDto,
+  ) {
+    return this.communitiesService.updateByManager(address, data);
   }
 
   @Patch(':address/edit')

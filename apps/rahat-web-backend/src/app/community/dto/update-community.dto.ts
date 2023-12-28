@@ -148,3 +148,38 @@ export class UploadAssetDto {
   })
   mimeType: UploadAssetParams['mimeType'];
 }
+
+export class UpdateByManagerDto {
+  @ApiProperty({
+    type: 'string',
+    example: '0xAF5Fc4D7D6DBF1221C1330D88553E95959027391',
+    description: 'walletAddress',
+  })
+  @IsString()
+  walletAddress: string;
+
+  @ApiProperty({
+    type: 'number',
+    example: 300,
+    description: 'benificiaries',
+  })
+  @IsNumber()
+  beneficiaries: number;
+
+  @ApiProperty({
+    type: 'string',
+    example: '30',
+    description: 'fundRaisedLocal',
+  })
+  @IsString()
+  fundRaisedLocal: string;
+
+  @ApiProperty({
+    type: 'string',
+    example:
+      'Assumenda iure sint ducimus consequuntur maxime ipsum quisquam necessitatibus.',
+    description: 'description',
+  })
+  @IsString()
+  description: string;
+}

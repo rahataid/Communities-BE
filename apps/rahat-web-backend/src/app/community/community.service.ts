@@ -9,6 +9,7 @@ import { paginate } from '../utils/paginate';
 import { CreateCommunityDto } from './dto/create-community.dto';
 import { CreateManager } from './dto/manager.dto';
 import {
+  UpdateByManagerDto,
   UpdateCommunityAssetDto,
   UpdateCommunityDto,
 } from './dto/update-community.dto';
@@ -398,5 +399,45 @@ export class CommunityService {
     });
 
     return updateData;
+  }
+  async updateByManager(address: string, data: UpdateByManagerDto) {
+    const findManager = await this.prisma.communityManager.findFirst({
+      where: {
+        walletAddress: data.walletAddress,
+        communities: {
+          has: address,
+        },
+      },
+    });
+    const findCommunity = await this.prisma.communityDemographics.findFirst({
+      where: {
+        community: {
+          address: address,
+        },
+      },
+    });
+
+    return (
+      findManager &&
+      (await this.prisma.community.update({
+        where: {
+          address: address,
+        },
+        data: {
+          summary: {
+            update: {
+              where: {
+                id: findCommunity.id,
+              },
+              data: {
+                total_beneficiaries: data.beneficiaries,
+              },
+            },
+          },
+          description: data.description,
+          fundRaisedLocal: data.fundRaisedLocal,
+        },
+      }))
+    );
   }
 }

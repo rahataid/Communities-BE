@@ -10,6 +10,7 @@ export class ManagersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(manager: CreateManagerDto) {
+    console.log(manager);
     const findManager = await this.prisma.communityManager.findFirst({
       where: {
         walletAddress: manager?.walletAddress,
@@ -19,21 +20,25 @@ export class ManagersService {
       return await this.prisma.communityManager.create({
         data: {
           name: manager.name,
-          email: manager.email,
-          phone: manager.phone.toString(),
+          // email: manager.email,
+          // phone: manager.phone.toString(),
           walletAddress: manager.walletAddress,
-          communities: manager.communities,
+          communities: [manager.communities],
         },
       });
     } else {
+      const existingCommunities = findManager.communities || [];
+      const newCommunities = existingCommunities.includes(manager.communities);
+
+      const updatedCommunities = newCommunities
+        ? [...existingCommunities]
+        : [...existingCommunities, manager.communities];
       return await this.prisma.communityManager.update({
         where: {
           id: findManager?.id,
         },
         data: {
-          communities: {
-            push: manager?.communities,
-          },
+          communities: updatedCommunities,
         },
       });
     }

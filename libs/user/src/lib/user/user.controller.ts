@@ -53,8 +53,8 @@ export class UserController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
-  @UseGuards(JwtGuard, AbilitiesGuard)
+  // @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
+  // @UseGuards(JwtGuard, AbilitiesGuard)
   @Get('')
   listAll() {
     return this.userService.listUsers();

@@ -20,6 +20,7 @@ export class AuthService {
 
   async walletLogin(dto: WalletLoginDto) {
     try {
+      console.log(dto);
       const messageHash = ethers?.hashMessage(ethers?.toUtf8Bytes(dto.message));
       const walletAddress = ethers?.recoverAddress(messageHash, dto.signature);
       const user = await this.userService.getUserByAuthAddress(walletAddress);

@@ -8,17 +8,17 @@ export class CreateManagerDto {
   @IsString()
   name: string;
 
-  @ApiProperty({
-    example: '9874561230',
-  })
-  @IsString()
-  phone: string;
+  // @ApiProperty({
+  //   example: '9874561230',
+  // })
+  // @IsString()
+  // phone: string;
 
-  @ApiProperty({
-    example: 'test@mailinator.com',
-  })
-  @IsEmail()
-  email: string;
+  // @ApiProperty({
+  //   example: 'test@mailinator.com',
+  // })
+  // @IsEmail()
+  // email: string;
 
   @ApiProperty({
     example: '0x00',
@@ -26,6 +26,9 @@ export class CreateManagerDto {
   @IsString()
   walletAddress: string;
 
+  @ApiProperty({
+    example: '0x00sdslkidjfhgggjkkdll',
+  })
   @IsOptional()
-  communities: string[];
+  communities: string;
 }

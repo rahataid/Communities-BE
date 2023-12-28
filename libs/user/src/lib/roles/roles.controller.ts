@@ -53,8 +53,8 @@ export class RolesController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.ROLE })
-  @UseGuards(JwtGuard, AbilitiesGuard)
+  // @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.ROLE })
+  // @UseGuards(JwtGuard, AbilitiesGuard)
   @Get()
   listRoles() {
     return this.roleService.listRoles();
