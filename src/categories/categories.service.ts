@@ -21,7 +21,7 @@ export class CategoriesService {
       console.log({len});
       await this.prisma.category.create({
         data: {
-          id: len,
+          id: len+1,
           name: name,
         },
       });
