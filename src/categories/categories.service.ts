@@ -18,6 +18,7 @@ export class CategoriesService {
     });
     if (category.length > 0) {
       const len = category[category.length - 1];
+      console.log({len});
       await this.prisma.category.create({
         data: {
           id: len.id + 1,
