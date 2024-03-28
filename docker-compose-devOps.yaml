@@ -26,7 +26,7 @@ services:
     image: rahat-website-be:devOps
     container_name: rahat-website-be
     volumes:
-      - .env:/usr/src/app/.env
+      - .env:/usr/src/app/.env`
     ports:
       - 3333:3333
     networks:
