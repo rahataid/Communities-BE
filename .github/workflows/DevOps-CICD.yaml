@@ -82,6 +82,7 @@ jobs:
             Post Content :rocket:
             Commit ID: ${{ github.sha }}
             Commit Username: ${{ github.actor }}
+            Action Status: ${{ github.workflow }}
 
 #   deploy:
 #     name: build && push image to Docker hub
