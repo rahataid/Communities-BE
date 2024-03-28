@@ -1,6 +1,7 @@
 {
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "editor.formatOnSave": true
-  }
+    "source.organizeImports": "explicit",
+    "editor.formatOnSave": "explicit"
+  },
+  "codeQL.createQuery.qlPackLocation": "/home/wildboy/Rumsan/Rahat/rahat-website-backend"
 }

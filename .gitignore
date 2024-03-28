@@ -37,3 +37,7 @@ scripts/
 !.vscode/launch.json
 !.vscode/extensions.json
 .env
+
+
+# Local CodeQL
+codeql-*
