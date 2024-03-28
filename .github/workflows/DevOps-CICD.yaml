@@ -1,0 +1,97 @@
+name: DevOps CI/CD
+on:
+  push:
+    branches:
+      - 'devOps'
+  pull_request:
+    branches:
+      - 'devOps'
+
+env:
+  CI: false
+#   env_devops: ${{ secrets.ENV_DEVOPS }}
+
+jobs:
+  test:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: import env file
+        run: |
+          cp .env.devOps .env
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build application
+        run: |
+          yarn cache clean -f && \
+          yarn install --frozen-lockfile && \
+          yarn prisma generate && \
+          yarn build
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: app build for test
+        run: docker build -t rahat-website-be:devOps -f Dockerfile .
+
+      - name: Setup Apps in Container
+        run: |
+          docker-compose -f docker-compose-devOps.yaml up -d
+          docker-compose -f docker-compose-devOps.yaml ps -a
+
+      - name: Setup Database
+        run: |
+          docker exec rahat-website-be npx prisma migrate dev
+          docker exec rahat-website-be npx ts-node prisma/seed.ts
+
+#   deploy:
+#     name: build && push image to Docker hub
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: import env file
+#         run: |
+#           touch ./.env && echo "$env_devops" >> ./.env
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
+
+#       - name: docker login
+#         uses: docker/login-action@v3
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#       - name: build && push
+#         id: build-push
+#         uses: docker/build-push-action@v5
+#         with:
+#           context: .
+#           file: Dockerfile
+#           push: ${{ github.event_name == 'push' && 'true' || 'false' }}
+#           tags: rumsan/rahat-website-be-api:devOps
