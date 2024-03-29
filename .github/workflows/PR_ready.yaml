@@ -1,0 +1,39 @@
+name: Enforce Branch and PR Rules
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  enforce_rules:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check branch name
+        id: branch_check
+        run: |
+          branch_name="${{ github.head_ref }}"
+          if [[ $branch_name == "main" || $branch_name == "stage" || $branch_name == "dev" ]]; then
+            echo "Valid branch name"
+            echo "::set-output name=branch_valid::true"
+          elif [[ $branch_name =~ ^(feature|clean-up|bugfix|hotfix)\/.*$ ]]; then
+            echo "Valid feature branch name"
+            echo "::set-output name=branch_valid::true"
+          else
+            echo "Invalid branch name"
+            echo "::set-output name=branch_valid::false"
+          fi
+
+      - name: Check PR mergeability
+        id: pr_check
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/pulls/${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enforce Rules
+        if: steps.branch_check.outputs.branch_valid == 'false' || steps.pr_check.outputs.data.mergeable == 'false'
+        run: |
+          echo "Invalid branch name or PR not mergeable. Please follow the branch naming convention and ensure the PR can be merged."
+          exit 1
