@@ -83,6 +83,7 @@ jobs:
             Commit ID: ${{ github.sha }}
             Commit Username: ${{ github.actor }}
             Action Status: ${{ github.workflow }}
+            Job Status: ${{ job.status }}
 
 #   deploy:
 #     name: build && push image to Docker hub
