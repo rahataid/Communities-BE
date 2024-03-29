@@ -81,23 +81,11 @@ jobs:
           SLACK_MESSAGE: |
             Post Content :rocket:
             Commit ID: ${{ github.sha }}
+            Commit Message: ${{ steps.commit_message.outputs.message }}
             Commit Username: ${{ github.actor }}
             Action Status: ${{ github.workflow }}
             Job Status: ${{ job.status }}
 
-      - name: Send Slack notification
-        if: always()
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          args: >
-            --data-urlencode 'payload={"channel": "devops", 
-                                    "attachments": [{"color": "${{ job.status }}", 
-                                                     "author_name": "GitHub Action", 
-                                                     "author_icon": "https://github.com/rtCamp.png?size=48", 
-                                                     "title": "Actions Notifications", 
-                                                     "text": "Post Content :rocket:\nCommit ID: ${{ github.sha }}\nCommit Username: ${{ github.actor }}\nWorkflow: ${{ github.workflow }}\nJob Status: ${{ job.status }}"}]'
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 #   deploy:
 #     name: build && push image to Docker hub
 #     runs-on: ubuntu-latest
