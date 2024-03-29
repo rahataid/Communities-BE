@@ -16,7 +16,7 @@ jobs:
           if [[ $branch_name == "main" || $branch_name == "stage" || $branch_name == "dev" ]]; then
             echo "Valid branch name"
             echo "::set-output name=branch_valid::true"
-          elif [[ $branch_name =~ ^(feature|clean-up|bugfix|hotfix)\/.*$ ]]; then
+          elif [[ $branch_name =~ ^(dev|stage|feature|clean-up|bugfix|hotfix)\/.*$ ]]; then
             echo "Valid feature branch name"
             echo "::set-output name=branch_valid::true"
           else
