@@ -81,7 +81,7 @@ jobs:
           SLACK_MESSAGE: |
             Post Content :rocket:
             Commit ID: ${{ github.sha }}
-            Commit Message: ${{ steps.commit_message.outputs.message }}
+            Commit Message: ${{ github.event.head_commit.message }}
             Commit Username: ${{ github.actor }}
             Action Status: ${{ github.workflow }}
             Job Status: ${{ job.status }}
